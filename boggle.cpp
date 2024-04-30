@@ -95,5 +95,63 @@ bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>
 								   std::string word, std::set<std::string>& result, unsigned int r, unsigned int c, int dr, int dc)
 {
 //add your solution here!
+    
+    // true means there could be a longer word out there
+    // false means there are no viable words beyond this point
 
+    
+    // case 1: the word has reached the end of the board
+    // there cannot be any more viable words beyond here
+    if (r >= board.size() || c >= board.size()) {
+
+      // case 1.1: this word at the end of the grid is valid
+      if (dict.find(word) != dict.end()) {
+        //std::cout << "case 1.1 ";
+        //std::cout << "appending word to result: " << word << std::endl;
+        result.insert(word);
+      }
+      // case 1.2: if not, do not add word to results
+
+      return false;
+    }
+    
+    word.push_back(board[r][c]);
+
+    // case 2: the word is not part of the prefix set
+    if (prefix.count(word) == 0) {
+      // case 2.1: the word can still be a valid standalone word
+      // if it is, it is guaranteed that that is the longest word possible      
+      if (dict.count(word) == 1) {
+        //std::cout << "case 2.1 ";
+        //std::cout << "appending word to result: " << word << std::endl;
+        result.insert(word);
+        return true;
+      }
+      // case 2.2: it is not a valid standalone word
+      
+      // regardless, we stop searching after this
+      return false;
+    }
+    
+    // case 3: the word is part of the prefix set
+    else {
+
+      // case 3.1: the word is a valid standalone word
+      if (!boggleHelper(dict, prefix, board, word, result, r + dr, c + dc, dr, dc)) {
+        if (dict.count(word) == 1) {
+          //std::cout << "case 3.1 ";
+          //std::cout << "appending word to result: " << word << std::endl;
+          result.insert(word);
+          return true;
+        }
+      }
+      // case 3.2: the word is a prefix, but not valid
+      // there may be a longer word out there
+      else {
+        return true;
+      } 
+      
+    }
 }
+
+
